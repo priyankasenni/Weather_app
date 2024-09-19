@@ -1,2 +1,20 @@
+Weather App
+Overview
+The Weather App is an Android application that allows users to search for city names and retrieve the current weather information for those locations. Designed with a modern user interface using Jetpack Compose, this app not only provides a seamless user experience but also adheres to best coding practices and architectural patterns.
 
-Weather App is an Android application designed to search for city names and retrieve the current weather for those locations. Built with Jetpack Compose for the UI, this app includes Dependency Injection with Hilt, Navigation with Jetpack, and the MVVM architecture pattern. It fetches weather data through API calls and adheres to coding standards.      
+Features
+Search for Cities: Easily look up current weather conditions by entering city names.
+Modern UI: Built with Jetpack Compose, featuring card layouts and customizable themes.
+Dependency Injection: Utilizes Hilt for efficient dependency management.
+Navigation: Implements Jetpack Navigation for smooth transitions between screens.
+MVVM Architecture: Follows the Model-View-ViewModel architecture pattern for better separation of concerns.
+Unit Testing: Comprehensive unit tests to ensure code reliability and maintainability.
+API Integration: Fetches real-time weather data through RESTful API calls.
+Technologies Used
+Kotlin
+Jetpack Compose
+Hilt
+Jetpack Navigation
+MVVM Architecture
+Retrofit (for API calls)
+JUnit (for unit testing)
