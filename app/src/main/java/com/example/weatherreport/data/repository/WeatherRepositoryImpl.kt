@@ -1,5 +1,7 @@
-package com.example.weatherreport.data
+package com.example.weatherreport.data.repository
 
+import com.example.weatherreport.data.model.WeatherResponse
+import com.example.weatherreport.data.service.WeatherService
 import javax.inject.Inject
 
 class WeatherRepositoryImpl @Inject constructor(

@@ -1,12 +1,15 @@
 package com.example.weatherreport
 
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,7 +17,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -26,11 +35,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
+import com.example.weatherreport.ui.navigation.SetupNavGraph
 import com.example.weatherreport.ui.theme.WeatherReportTheme
 import dagger.hilt.android.AndroidEntryPoint
 import com.example.weatherreport.viewmodel.WeatherViewModel
@@ -45,25 +55,23 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             WeatherReportTheme {
-                val navController = rememberNavController()
-
-                NavHost(navController = navController, startDestination = Route.SEARCH_SCREEN) {
-                    composable(route = Route.SEARCH_SCREEN) {
-                        SearchScreen(
-                            navigateToWeatherScreen = { cityName ->
-                                navController.navigate("weatherScreen/$cityName")
-                            }
-                        )
-                    }
-                    composable(route = Route.WEATHER_SCREEN) { backStackEntry ->
-                        val cityName = backStackEntry.arguments?.getString("cityName") ?: ""
-                        WeatherScreen(
-                            cityName = cityName,
-                            navigateBack = {
-                                navController.popBackStack()
-                            },
-                            viewModel = viewModel
-                        )
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.verticalGradient(
+                                    listOf(
+                                        Color.Cyan, Color.Gray
+                                    )
+                                )
+                            )
+                    ) {
+                        val navController = rememberNavController()
+                        SetupNavGraph(navController = navController, viewModel = viewModel)
                     }
                 }
             }
@@ -97,9 +105,13 @@ fun SearchScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = { navigateToWeatherScreen(cityName) }
+            onClick = { navigateToWeatherScreen(cityName) },
+            shape = RoundedCornerShape(8.dp)
         ) {
-            Text("Current Weather")
+            Text(
+                "Search Weather",
+                style = MaterialTheme.typography.titleMedium
+            )
         }
     }
 }
@@ -125,7 +137,11 @@ fun WeatherScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Weather in $cityName")
+        Text(
+            "Weather in ${cityName.replaceFirstChar { it.uppercase() }}",
+            style = MaterialTheme.typography.titleLarge,
+            color = Color.White
+        )
         Spacer(modifier = Modifier.height(16.dp))
         when {
             weatherState == null -> Text("Loading...")
@@ -134,21 +150,53 @@ fun WeatherScreen(
                 val main = weatherState?.main
                 val iconUrl = "http://openweathermap.org/img/wn/${weather?.icon}.png"
 
-                Text("Temperature: ${main?.temp}°C")
-                Text("Description: ${weather?.description}")
+                Card(
+                    modifier = Modifier.padding(16.dp),
+                    elevation = CardDefaults.cardElevation(4.dp),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        val temperatureCelsius =
+                            main?.temp?.minus(273.15)?.let { "%.1f".format(it) }
 
+                        Text(
+                            "Temperature: ${temperatureCelsius}°C",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            "Description: ${weather?.description}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.height(16.dp))
+                Log.d("WeatherScreen", "Icon URL: $iconUrl")
 
-                AsyncImage(
+                SubcomposeAsyncImage(
                     model = iconUrl,
+                    loading = {
+                        CircularProgressIndicator(
+                            color = Color.Blue
+                        )
+                    },
                     contentDescription = "Weather Icon",
                     modifier = Modifier.size(100.dp)
                 )
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = navigateBack) {
-            Text("Back")
+        Button(
+            onClick = navigateBack,
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Text(
+                "Back",
+                style = MaterialTheme.typography.titleMedium
+            )
         }
     }
 }
+

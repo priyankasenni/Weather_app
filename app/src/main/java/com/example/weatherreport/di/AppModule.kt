@@ -1,8 +1,8 @@
 package com.example.weatherreport.di
 
-import com.example.weatherreport.data.WeatherRepository
-import com.example.weatherreport.data.WeatherRepositoryImpl
-import com.example.weatherreport.data.WeatherService
+import com.example.weatherreport.data.repository.WeatherRepository
+import com.example.weatherreport.data.repository.WeatherRepositoryImpl
+import com.example.weatherreport.data.service.WeatherService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module

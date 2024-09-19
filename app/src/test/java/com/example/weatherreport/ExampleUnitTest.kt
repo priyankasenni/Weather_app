@@ -1,7 +1,5 @@
 package com.example.weatherreport
 
-import com.example.weatherreport.data.WeatherRepository
-import com.example.weatherreport.viewmodel.WeatherViewModel
 import org.junit.Test
 
 import org.junit.Assert.*
